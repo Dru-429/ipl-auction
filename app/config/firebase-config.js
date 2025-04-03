@@ -2,12 +2,14 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, GoogleAuthProvider} from 'firebase/auth'
 
-const apiKey = process.env.FIREBASE_API_KEY;
+const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+const authDomain = process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN;
+const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
 
 const firebaseConfig = {
   apiKey: apiKey,
-  authDomain: "auckit-ipl-auction.firebaseapp.com",
-  projectId: "auckit-ipl-auction",
+  authDomain: authDomain,
+  projectId: projectId,
   storageBucket: "auckit-ipl-auction.firebasestorage.app",
   messagingSenderId: "878389457593",
   appId: "1:878389457593:web:beb767a3baa14cf06f2168",
