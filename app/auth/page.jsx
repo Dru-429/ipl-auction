@@ -5,9 +5,27 @@ import { useRouter } from "next/navigation"; // Correct navigation method
 import { auth, provider } from "../config/firebase-config";
 
 const useGetUserInfo = () => {
-  const { name, profilePhoto, userID, isAuth } =
-    JSON.parse(localStorage.getItem("auth")) || {};
-  return { name, profilePhoto, userID, isAuth };
+  const [userInfo, setUserInfo] = useState({
+    name: "",
+    profilePhoto: "",
+    userID: "",
+    isAuth: false,
+  });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") { // Ensure it's running on the client
+      try {
+        const storedData = JSON.parse(localStorage.getItem("auth"));
+        if (storedData) {
+          setUserInfo(storedData);
+        }
+      } catch (error) {
+        console.error("Error parsing auth data:", error);
+      }
+    }
+  }, []);
+
+  return userInfo;
 };
 
 const Auth = () => {
@@ -26,7 +44,7 @@ const Auth = () => {
         isAuth: true,
       };
       localStorage.setItem("auth", JSON.stringify(authInfo));
-      router.push("/expense-tracker"); // Navigate correctly in Next.js
+      router.push("/home"); // Navigate correctly in Next.js
     } catch (error) {
       throw new Error("Google Sign-in failed");
     }
@@ -40,8 +58,14 @@ const Auth = () => {
 
   return (
     <div>
-      <p className="bg-red-500">Sign in with Google to continue</p>
-      <button onClick={GoogleSignin}>Sign In With Google</button>
+      <p className="bg-red-500 w-screen h-full">
+        Sign in with Google to continue
+      </p>
+      <button 
+        onClick={GoogleSignin}
+      >
+        Sign In With Google
+      </button>
     </div>
   );
 };

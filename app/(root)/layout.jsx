@@ -1,8 +1,11 @@
 import React from 'react'
 
-const HomeLayout = () => {
+const HomeLayout = ( {children} ) => {
   return (
-    <div>HomeLayout</div>
+    <div>
+      AucKit Layout
+      { children }
+    </div>
   )
 }
 
