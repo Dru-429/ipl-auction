@@ -1,40 +1,43 @@
-import React from 'react'
-import { auth, provider } from '../../config/firebase-config'
-import { signInWithPopup } from 'firebase/auth'
-import { useNavigate, Navigate } from 'react-router-dom'
-import useGetUserInfo from '../../hooks/useGetUserInfo'
+"use client";
+
+import { auth, provider } from "@/config/firebase-config"; // Use absolute imports
+import { signInWithPopup } from "firebase/auth";
+import { useRouter } from "next/navigation"; // Correct navigation method
+import useGetUserInfo from "@/hooks/useGetUserInfo";
 
 const Auth = () => {
-    
-    const navigate = useNavigate()
-    const { isAuth } = useGetUserInfo()
+  const router = useRouter(); // Next.js Router
+  const { isAuth } = useGetUserInfo(); // Custom hook for auth state
 
-    const GoogleSignin = async () =>{
-        const results = await signInWithPopup(auth, provider);
-        console.log(results)
-        const authInfo = {
-            userID: results.user.uid,
-            name: results.user.displayName,
-            profilePhoto: results.user.photoURL,
-            isAuth: true,
-        }
-        localStorage.setItem("auth", JSON.stringify(authInfo))
-        navigate("/expense-tracker")
-
+  const GoogleSignin = async () => {
+    try {
+      const results = await signInWithPopup(auth, provider);
+      console.log(results);
+      const authInfo = {
+        userID: results.user.uid,
+        name: results.user.displayName,
+        profilePhoto: results.user.photoURL,
+        isAuth: true,
+      };
+      localStorage.setItem("auth", JSON.stringify(authInfo));
+      router.push("/expense-tracker"); // Navigate correctly in Next.js
+    } catch (error) {
+      console.error("Google Sign-in Error:", error);
     }
+  };
 
-    if(isAuth) {
-        return  navigate('/expense-tracker')
-    }
-   
-    return (
-        <div>
-            <p className='bg-red-500'>Sign in with google to continue</p>
-            <button onClick={GoogleSignin}>
-                Sign In With Google
-            </button>
-        </div>
-    )
-}
+  // Redirect authenticated users immediately
+  if (isAuth) {
+    router.push("/expense-tracker");
+    return null; // Prevent rendering UI
+  }
 
-export default Auth
+  return (
+    <div>
+      <p className="bg-red-500">Sign in with Google to continue</p>
+      <button onClick={GoogleSignin}>Sign In With Google</button>
+    </div>
+  );
+};
+
+export default Auth;
