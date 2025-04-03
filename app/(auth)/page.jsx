@@ -1,11 +1,17 @@
 "use client";
 
-import { auth, provider } from "@/config/firebase-config"; // Use absolute imports
 import { signInWithPopup } from "firebase/auth";
 import { useRouter } from "next/navigation"; // Correct navigation method
-import useGetUserInfo from "@/hooks/useGetUserInfo";
+import { auth, provider } from "../config/firebase-config";
+
+const useGetUserInfo = () => {
+  const { name, profilePhoto, userID, isAuth } =
+    JSON.parse(localStorage.getItem("auth")) || {};
+  return { name, profilePhoto, userID, isAuth };
+};
 
 const Auth = () => {
+
   const router = useRouter(); // Next.js Router
   const { isAuth } = useGetUserInfo(); // Custom hook for auth state
 
@@ -22,13 +28,13 @@ const Auth = () => {
       localStorage.setItem("auth", JSON.stringify(authInfo));
       router.push("/expense-tracker"); // Navigate correctly in Next.js
     } catch (error) {
-      console.error("Google Sign-in Error:", error);
+      throw new Error("Google Sign-in failed");
     }
   };
 
   // Redirect authenticated users immediately
   if (isAuth) {
-    router.push("/expense-tracker");
+    router.push("/home");
     return null; // Prevent rendering UI
   }
 
